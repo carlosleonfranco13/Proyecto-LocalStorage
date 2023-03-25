@@ -7,7 +7,17 @@ let tweets = [];
 eventListeners();
 
 function eventListeners() {
+    // Cuando el usuario agrega un nuevo Tweet
     formulario.addEventListener('submit', agregarTweet);
+
+    // Cuando el documento esta listo
+    document.addEventListener('DOMContentLoaded', () => {
+        tweets = JSON.parse(localStorage.getItem('tweets')) || [];
+
+        console.log(tweets);
+
+        crearHTML();
+    });
 }
 
 // FUNCIONES
@@ -62,11 +72,24 @@ function crearHTML() {
 
     if(tweets.length > 0) {
         tweets.forEach(tweet => {
+            // Agregar un boton de eliminar
+            const btnEliminar = document.createElement('a');
+            btnEliminar.classList.add('borrar-tweet');
+            btnEliminar.innerText = 'X'; 
+
+            // Añador la función de eliminar
+            btnEliminar.onclick = () => {
+                borrarTweet(tweet.id);
+            }
+
             // Crear el HTML
             const li = document.createElement('li');
 
             // Añadir el texto
             li.textContent = tweet.tweet;
+
+            // Asignar el botón
+            li.appendChild(btnEliminar);
 
             // Insertarlo en el HTML
             listaTweets.appendChild(li);
@@ -79,6 +102,13 @@ function crearHTML() {
 // Agrega los TWeets actuales a LocalStorage
 function sincronizarStorage() {
     localStorage.setItem('tweets', JSON.stringify(tweets));
+}
+
+// Elimina un tweet
+function borrarTweet(id) {
+    tweets = tweets.filter(tweet => tweet.id !== id);
+
+    crearHTML();
 }
 
 // Limpiar el HTML
